@@ -1,0 +1,5 @@
+name: BookNickAuthor
+version: @version@
+main: me.numilani.booknickauthor.BookNickAuthor
+authors: [ Numilani ]
+description: Sets the author of books to the player's nick instead of their username.
