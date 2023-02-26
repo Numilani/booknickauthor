@@ -1,5 +1,7 @@
 name: BookNickAuthor
-version: @version@
+version: '${version}'
 main: me.numilani.booknickauthor.BookNickAuthor
 authors: [ Numilani ]
+depend:
+  - BKCommonLib
 description: Sets the author of books to the player's nick instead of their username.
