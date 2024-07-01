@@ -1,35 +1,37 @@
 package me.numilani.booknickauthor;
 
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.meta.SimpleCommandMeta;
-import cloud.commandframework.paper.PaperCommandManager;
-import com.bergerkiller.bukkit.common.PluginBase;
 import me.numilani.booknickauthor.commands.WriteNoteCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.bergerkiller.bukkit.common.cloud.CloudSimpleHandler;
-
-
-import java.util.function.Function;
-import java.util.logging.Logger;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.meta.CommandMeta;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 public final class BookNickAuthor extends JavaPlugin {
 //    CloudSimpleHandler handler = new CloudSimpleHandler();
-    public PaperCommandManager<CommandSender> cmdHandler;
-    public AnnotationParser<CommandSender> cmdParser;
+    public LegacyPaperCommandManager<CommandSender> manager;
+    public AnnotationParser<CommandSender> annotationParser;
 
 
     @Override
     public void onEnable() {
         try {
-            cmdHandler = new PaperCommandManager<>(this, CommandExecutionCoordinator.simpleCoordinator(), Function.identity(), Function.identity());
-            cmdParser = new AnnotationParser<>(cmdHandler, CommandSender.class, parserParameters -> SimpleCommandMeta.empty());
+            manager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.simpleCoordinator());
+            if (manager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+                // Register Brigadier mappings for rich completions
+                manager.registerBrigadier();
+            } else if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+                // Use Paper async completions API (see Javadoc for why we don't use this with Brigadier)
+                manager.registerAsynchronousCompletions();
+            }
+            annotationParser = new AnnotationParser(manager, CommandSender.class, parameters -> CommandMeta.empty());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         getServer().getPluginManager().registerEvents(new BookListener(), this);
-//        this.getCommand("writenote").setExecutor(new WriteNoteCommand(this));
+        annotationParser.parse(new WriteNoteCommand(this));
     }
 
     @Override

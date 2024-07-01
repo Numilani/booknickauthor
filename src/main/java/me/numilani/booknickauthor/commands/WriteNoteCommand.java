@@ -1,16 +1,14 @@
 package me.numilani.booknickauthor.commands;
 
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.specifier.Quoted;
 import me.numilani.booknickauthor.BookNickAuthor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.incendo.cloud.annotation.specifier.Quoted;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
 
 import java.util.ArrayList;
 
@@ -21,7 +19,7 @@ public class WriteNoteCommand {
         this.plugin = plugin;
     }
 
-    @CommandMethod("writenote <title> <message>")
+    @Command("writenote <title> <message>")
     public void WriteNote(CommandSender sender, @Quoted @Argument("title") String title, @Quoted @Argument("message") String message){
         Player player = (Player) sender;
 
